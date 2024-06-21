@@ -9,6 +9,7 @@
     "lint": "eslint . --ext js",
     "test": "mocha",
     "coverage": "c8 mocha",
+    "lint:staged": "lint-staged",
     "format": "prettier --write ."
   },
   "keywords": [],
