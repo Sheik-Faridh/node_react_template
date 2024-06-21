@@ -14,8 +14,18 @@
     "format": "prettier --write 'src/**/*.{js,jsx,json,css,scss,md}'"
   },
   "dependencies": {
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
+    "@fontsource/roboto": "^5.0.13",
+    "@mui/icons-material": "^5.15.20",
+    "@mui/material": "^5.15.20",
+    "@tanstack/react-query": "^5.45.1",
+    "axios": "^1.7.2",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-hook-form": "^7.52.0",
+    "react-router-dom": "^6.23.1",
+    "zustand": "^4.5.2"
   },
   "devDependencies": {
     "@types/react": "^18.2.66",
@@ -27,6 +37,8 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.6",
     "lint-staged": "^15.2.7",
-    "vite": "^5.2.0"
+    "prettier": "^3.3.2",
+    "vite": "^5.2.0",
+    "vite-plugin-compression2": "^1.1.1"
   }
 }

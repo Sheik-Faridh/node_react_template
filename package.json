@@ -9,11 +9,11 @@
     "@commitlint/cli": "^19.3.0",
     "@commitlint/config-conventional": "^19.2.2",
     "husky": "^9.0.11",
-    "lerna": "^8.1.3",
-    "prettier": "^3.3.2"
+    "lerna": "^8.1.3"
   },
   "scripts": {
     "prepare": "husky",
+    "dev": "lerna run dev",
     "lint:staged": "lerna run lint:staged"
   }
 }
