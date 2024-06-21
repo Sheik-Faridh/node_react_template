@@ -57,7 +57,7 @@ export const init = async () => {
   app.register(underPressure, underPressureConfig())
 
   // Declare a route
-  app.get('/', async function handler(request, reply) {
+  app.get('/', async function handler() {
     return { hello: 'world' }
   })
 
