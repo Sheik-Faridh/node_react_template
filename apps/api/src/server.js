@@ -57,9 +57,10 @@ export const init = async () => {
   app.register(underPressure, underPressureConfig())
 
   // Declare a route
-  app.get('/', async function handler() {
+  app.get('/', async function handler(request, reply) {
     return { hello: 'world' }
   })
+
   await app.ready()
   setupAllShutdownHandlers(app)
   app.log.info('Everything is Loaded..!')
