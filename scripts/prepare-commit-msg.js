@@ -1,34 +1,54 @@
+#!/usr/bin/env node
+
+import childProcess from 'child_process'
 import fs from 'fs'
-import { execSync } from 'child_process'
+import path from 'path'
 
-// List of branches to skip
-const branchesToSkip = ['master', 'main', 'develop', 'staging', 'test']
+const scriptName = 'prepare-commit-msg'
 
-// Get the current branch name
-const branchName = execSync('git symbolic-ref --short HEAD').toString().trim()
+const excludedBranches = ['main', 'master', 'develop', 'staging', 'test']
 
-// Check if the branch is in the skip list
-if (branchesToSkip.includes(branchName)) {
-  process.exit(0) // Exit without making changes
+const pathToHead = (folder) => path.resolve(path.join(folder, '.git', 'HEAD'))
+const pathToParentFolder = (folder) => path.resolve(path.join(folder, '..'))
+const isRepositoryRoot = (folder) => fs.existsSync(pathToHead(folder))
+
+let repositoryRoot = process.cwd()
+while (!isRepositoryRoot(repositoryRoot)) {
+  const parent = pathToParentFolder(repositoryRoot)
+  if (parent == repositoryRoot) {
+    console.error(`${scriptName} was unable to find the root of the Git repository.`)
+    process.exit(1)
+  }
+  repositoryRoot = parent
 }
 
-// Extract the ticket ID from the branch name
-const ticketMatch = branchName.match(/CU-([a-zA-Z0-9]{4,})/)
-const ticketId = ticketMatch ? ticketMatch[1] : null
+const head = fs.readFileSync(pathToHead(repositoryRoot)).toString()
+const branchNameMatch = head.match(/^ref: refs\/heads\/(.*)/)
+if (!branchNameMatch) process.exit()
 
-// If no ticket ID is found, exit without making changes
-if (!ticketId) {
-  process.exit(0)
+const branchName = branchNameMatch[1]
+if (!branchName) process.exit()
+
+// Check if the branch name is in the excluded list
+if (excludedBranches.includes(branchName)) process.exit()
+
+const identifierMatch = branchName.match(/CU-([a-zA-Z0-9]{4,})/)
+if (!identifierMatch) process.exit()
+
+const identifier = identifierMatch[0]
+if (!identifier) process.exit()
+
+const commitMessageFile = process.argv[2]
+if (!commitMessageFile) {
+  console.error(`${scriptName} requires the name of the file containing the commit log message as first argument.`)
+  process.exit(1)
 }
 
-// Path to the commit message file
-const commitMsgFile = process.argv[2]
+const pathToCommitMessageFile = path.resolve(path.join(repositoryRoot, commitMessageFile))
+if (!fs.existsSync(pathToCommitMessageFile)) {
+  console.error(`${pathToCommitMessageFile} is not a file.`)
+  process.exit(1)
+}
 
-// Read the commit message
-const commitMsg = fs.readFileSync(commitMsgFile, 'utf8')
-
-// Prepend the ticket ID to the commit message
-const newCommitMsg = `[${ticketId}] ${commitMsg}`
-
-// Write the new commit message back to the file
-fs.writeFileSync(commitMsgFile, newCommitMsg)
+const content = fs.readFileSync(pathToCommitMessageFile).toString()
+if (content.indexOf(identifier) === -1) fs.writeFileSync(pathToCommitMessageFile, `${content.trim()} (${identifier})`)

@@ -1,1 +1,2 @@
-npm run prepare-commit-msg
+#!/bin/sh
+node scripts/prepare-commit-msg.js $1
